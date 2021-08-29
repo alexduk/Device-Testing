@@ -20,12 +20,11 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import org.snmp4j.util.DefaultPDUFactory;
 import org.snmp4j.util.TableEvent;
 import org.snmp4j.util.TableUtils;
-import java.util.logging.*;
 
 public class SNMPManager {
 
 	Snmp snmp = null;
-	String address = null;
+	String address = "";
 	String community = "";
 
 	public SNMPManager(String address, String community) {
@@ -40,17 +39,11 @@ public class SNMPManager {
 	}
 
 	public HashMap<Integer, String> getAsString(OID oid) throws IOException {
-		Logger logger = Logger.getLogger(SNMPManager.class.getName());
-		logger.setLevel(Level.WARNING);
 
 		TableUtils tUtils = new TableUtils(snmp, new DefaultPDUFactory());
 		List<TableEvent> events = tUtils.getTable(getTarget(), new OID[] { new OID(oid) }, null, null);
 		HashMap<Integer, String> snmpMap = new HashMap<Integer, String>();
 		for (TableEvent event : events) {
-			if (event.isError()) {
-				logger.warning(this.address + ": SNMP event error: " + event.getErrorMessage());
-				continue;
-			}
 			for (VariableBinding vb : event.getColumns()) {
 				String key = vb.getOid().toString();
 				String value = vb.getVariable().toString();

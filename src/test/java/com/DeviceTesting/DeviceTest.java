@@ -10,20 +10,22 @@ import org.testng.annotations.Test;
 
 public class DeviceTest {
 
-	SNMPManager client;
+	SNMPManager snmpClient;
+	SSHManager sshClient;
 
 	@BeforeTest
 	public void setup() throws IOException {
-		client = new SNMPManager("udp:10.104.62.221/161", "bkar");
-		client.start();
+		snmpClient = new SNMPManager("udp:10.104.62.221/161", "bkar");
+		snmpClient.start();
+		
+		sshClient = new SSHManager("apple15", "apple15", "10.104.62.221");
 	}
 
 	@Test
 	public void getAllInterfacesTest() throws Exception {
-		HashMap<Integer, String> snmpResponse = client.getAsString(new OID(".1.3.6.1.2.1.2.2.1.2"));
+		HashMap<Integer, String> snmpResponse = snmpClient.getAsString(new OID(".1.3.6.1.2.1.2.2.1.2"));
 
-		String cliResponseStr = SSHManager.sshWithDevice("apple15", "apple15", "10.104.62.221",
-				"show snmp mib ifmib ifindex");
+		String cliResponseStr = sshClient.sendCommand("show snmp mib ifmib ifindex");
 		HashMap<Integer, String> cliResponse = SSHManager.getResponseAsHashMap(cliResponseStr);
 
 		System.out.println(snmpResponse.toString());

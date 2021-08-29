@@ -8,9 +8,17 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 public class SSHManager {
+	String username = "";
+	String password = "";
+	String host = "";
 
-	public static String sshWithDevice(String username, String password, String host, String command) throws Exception {
+	public SSHManager(String username, String password, String host) {
+		this.username = username;
+		this.password = password;
+		this.host = host;
+	}
 
+	public String sendCommand(String command) throws Exception {
 		Session session = null;
 		ChannelExec channel = null;
 
